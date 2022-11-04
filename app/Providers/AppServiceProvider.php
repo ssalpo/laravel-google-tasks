@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\Category;
+use App\Observers\CategoryObserver;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -23,6 +26,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        Category::observe(CategoryObserver::class);
+
+        $this->routeBindings();
+    }
+
+    private function routeBindings(): void
+    {
+        Route::bind('category', static fn ($value) => Category::forUser()->findOrFail($value));
     }
 }
